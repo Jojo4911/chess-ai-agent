@@ -26,8 +26,7 @@ def victory_stats(white: int, draws: int, black: int):
     return total_games, white_ratio, draws_ratio, black_ratio
 
 # --- Tools ---
-@tool
-async def get_theoretical_moves(fen: str) -> OpeningExplorerResponse:
+def get_theoretical_moves(fen: str) -> OpeningExplorerResponse:
     """
     Interroge la base de données de parties de maîtres des échecs de l'Opening Explorer Lichess et retourne les coups théoriques principaux avec leurs statistiques.
 
@@ -53,9 +52,9 @@ async def get_theoretical_moves(fen: str) -> OpeningExplorerResponse:
     if not api_key:
         raise EnvironmentError("LICHESS_API_KEY non définie dans .env")
     
-    async with httpx.AsyncClient(timeout=httpx.Timeout(10.0)) as client:
+    with httpx.Client(timeout=httpx.Timeout(10.0)) as client:
         try:
-            response = await client.get(f"https://{lichess_url}/masters",
+            response = client.get(f"https://{lichess_url}/masters",
                 headers={
                     "Authorization": "Bearer " + api_key
                 },
