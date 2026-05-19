@@ -3,7 +3,7 @@ from app.schemas.lichess import OpeningExplorerResponse, CandidateMove, Position
 import httpx
 import os
 from dotenv import load_dotenv
-from langchain_core.tools import tool
+from langchain.tools import tool
 import asyncio # Seulement pour les tests
 
 load_dotenv()
@@ -106,7 +106,7 @@ async def get_theoretical_moves(fen: str) -> OpeningExplorerResponse:
     top_moves = sorted_moves[:5]
     return OpeningExplorerResponse(opening=pos_opening, moves=top_moves, position_stats=pos_stats)
 
-result = asyncio.run(get_theoretical_moves("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")) # Position riche = départ
+#result = asyncio.run(get_theoretical_moves("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")) # Position riche = départ
 #result = asyncio.run(get_theoretical_moves("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1")) # Position moyenne = après 1.e4
 #result = asyncio.run(get_theoretical_moves("rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPPKPPP/RNBQ1BNR b kq - 1 2")) # Position vide = Bongcloud
-print(result.model_dump_json(indent=2))
+#print(result.model_dump_json(indent=2))
