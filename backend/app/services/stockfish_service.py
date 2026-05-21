@@ -33,5 +33,5 @@ def evaluate_position(fen: str, depth: int = DEPTH) -> StockfishResponse:
 
 #result = evaluate_position("rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq d3 0 1") # Position de départ après 1.d4
 #result = evaluate_position("2r2rk1/1pqn1ppp/p1n1b3/4p3/Q3P3/2N1B3/PP2BPPP/2R1K2R w K - 0 1") # Position milieu de partie
-#result = evaluate_position("") # Position avec mat forcé
-#print(result.model_dump_json(indent=2))
+result = evaluate_position("k7/8/1K6/8/8/8/8/7R w - - 0 1") # Position avec mat forcé
+print(result.model_dump_json(indent=2))
