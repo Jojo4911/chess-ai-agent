@@ -1,6 +1,7 @@
 # --- Modèles de données Stockfish ---
 from pydantic import BaseModel
 from typing import Literal
+from app.schemas.chess import FenPosition
 
 class PositionEvaluation(BaseModel):
     """Une évaluation d'un coup."""
@@ -18,3 +19,4 @@ class StockfishResponse(BaseModel):
     evaluation: PositionEvaluation
     best_move: str
     top_moves: list[TopMove]
+    active_color: Literal["w", "b"]

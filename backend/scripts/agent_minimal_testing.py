@@ -8,6 +8,11 @@ import os
 load_dotenv()
 llm_model = os.getenv("LLM_MODEL")
 
+# Lecture du system prompt
+def load_system_prompt(path: str = "../prompts/agent_system.md") -> str:
+    with open(path, "r", encoding="utf-8") as f:
+        return f.read()
+
 # Initialisation du modèle
 model = init_chat_model(
     llm_model,
@@ -19,7 +24,7 @@ model = init_chat_model(
 agent = create_agent(
     model=model,
     tools=[get_opening_moves, get_position_evaluation],
-    system_prompt="Tu es un coach d'échecs pour jeunes joueurs. Tu parles français. Quand on te donne une position, utilise tes outils pour trouver les coups théoriques."
+    system_prompt=load_system_prompt()
 )
 
 # Test sur 3 positions
