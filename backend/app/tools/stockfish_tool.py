@@ -1,8 +1,9 @@
 from langchain.tools import tool
 from langchain_core.tools import ToolException
+from app.schemas.chess import ValidFen
 from app.services.stockfish_service import evaluate_position
 
-@tool
+@tool(args_schema=ValidFen)
 def get_position_evaluation(fen: str) -> str:
     """
     Interroge le moteur d'échecs Stockfish et retourne l'évaluation d'une position.
@@ -31,3 +32,5 @@ def get_position_evaluation(fen: str) -> str:
         return result.model_dump_json()
     except ToolException as e:
         return str(e)
+    
+get_position_evaluation.handle_validation_error = lambda e: str(e)

@@ -26,9 +26,19 @@ def tool(label, fn, fen):
     except Exception as e:
         print("!! Le tool a levé (anormal):", type(e).__name__, e)
 
+def tool_validation(label, fn, fen):
+    """args_schema doit bloquer et renvoyer un message, pas lever."""
+    print(f"\n=== [validation] {label} ===")
+    try:
+        print("RENVOYÉ:", fn.invoke({"fen": fen})[:200])
+    except Exception as e:
+        print("!! Levé (handle_validation_error manquant ?):", type(e).__name__, e)
+
 if __name__ == "__main__":
     service("Lichess FEN valide", get_theoretical_moves, VALID_FEN)
     service("Lichess FEN bidon", get_theoretical_moves, BIDON_FEN)
     service("Stockfish FEN valide", evaluate_position, VALID_FEN)
     service("Stockfish FEN bidon", evaluate_position, BIDON_FEN)
     tool("Tool Lichess FEN bidon (doit renvoyer une chaîne)", get_opening_moves, BIDON_FEN)
+    tool_validation("FEN bidon", get_opening_moves, "jenesuispasunfen")
+    tool_validation("FEN illégal (pas de roi)", get_opening_moves, "8/8/8/8/8/8/8/8 w - - 0 1")
