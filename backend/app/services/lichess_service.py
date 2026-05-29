@@ -3,7 +3,8 @@ from app.schemas.lichess import OpeningExplorerResponse, CandidateMove, Position
 import httpx
 import os
 from dotenv import load_dotenv
-from langchain.tools import tool
+import time
+from langchain_core.tools import ToolException
 import asyncio # Seulement pour les tests
 
 load_dotenv()
@@ -52,21 +53,28 @@ def get_theoretical_moves(fen: str) -> OpeningExplorerResponse:
     if not api_key:
         raise EnvironmentError("LICHESS_API_KEY non définie dans .env")
     
+    response = None
     with httpx.Client(timeout=httpx.Timeout(10.0)) as client:
-        try:
-            response = client.get(f"https://{lichess_url}/masters",
-                headers={
-                    "Authorization": "Bearer " + api_key
-                },
-                params={
-                    "fen": fen
-                }
-            )
-            response.raise_for_status()
-        except httpx.TimeoutException as e:
-            raise TimeoutError(f"Erreur de délais lors de l'appel API : {e}")
-        except httpx.HTTPStatusError as e:
-            raise ConnectionAbortedError(f"Erreur de status http lors de l'appel API : {e}")
+        for attempt in range(3):
+            try:
+                response = client.get(f"https://{lichess_url}/masters",
+                    headers={"Authorization": "Bearer " + api_key},
+                    params={"fen": fen},
+                )
+                response.raise_for_status()
+                break
+                # - Décomposition de la réponse -    
+            except httpx.TimeoutException as e:
+                raise ToolException("Lichess n'a pas répondu dans les temps, réessaie plus tard.") from e
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code in (429, 500):
+                    time.sleep(attempt + 1)
+                    continue
+                raise ToolException(f"Lichess a renvoyé une erreur {e.response.status_code}.") from e
+            except httpx.RequestError as e:
+                raise ToolException("Impossible de joindre Lichess (réseau).") from e
+        else:
+            raise ToolException("Lichess indisponible après 3 tentatives.")
 
     # - Décomposition de la réponse -    
     data = response.json()

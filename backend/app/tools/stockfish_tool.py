@@ -1,4 +1,5 @@
 from langchain.tools import tool
+from langchain_core.tools import ToolException
 from app.services.stockfish_service import evaluate_position
 
 @tool
@@ -25,5 +26,8 @@ def get_position_evaluation(fen: str) -> str:
         top_moves: Renvoie les N (défaut à 5) meilleurs coups avec leur score individuel.
         active_color: Renvoie a qui est le tour de jouer ("w" pour les blancs, "b" pour les noirs)
     """
-    result = evaluate_position(fen)
-    return result.model_dump_json()
+    try:
+        result = evaluate_position(fen)
+        return result.model_dump_json()
+    except ToolException as e:
+        return str(e)
