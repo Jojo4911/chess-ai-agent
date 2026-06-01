@@ -18,3 +18,4 @@ class StockfishResponse(BaseModel):
     evaluation: PositionEvaluation
     best_move: str
     top_moves: list[TopMove]
+    active_color: Literal["w", "b"]

@@ -1,7 +1,9 @@
 from langchain.tools import tool
+from langchain_core.tools import ToolException
+from app.schemas.chess import ValidFen
 from app.services.lichess_service import get_theoretical_moves
 
-@tool
+@tool(args_schema=ValidFen)
 def get_opening_moves(fen: str) -> str:
     """
     Interroge la base de données de parties de maîtres des échecs de l'Opening Explorer Lichess et retourne les coups théoriques principaux avec leurs statistiques.
@@ -23,5 +25,10 @@ def get_opening_moves(fen: str) -> str:
         moves: Donne les 5 coups les plus joués, les ratios de victoires, le nombre de parties jouées et le nom des ouvertures liées
         position_stats: Donne les ratios de victoires et le nombre de parties jouées de la position actuelle
     """
-    result = get_theoretical_moves(fen)
-    return result.model_dump_json()
+    try:
+        result = get_theoretical_moves(fen)
+        return result.model_dump_json()
+    except ToolException as e:
+        return str(e)
+    
+get_opening_moves.handle_validation_error = lambda e: str(e)
