@@ -75,18 +75,23 @@ L'application sera accessible sur :
 
 ```
 ├── backend/
+│   ├── api/
+│   │   └── main.py               # Point d'entrée FastAPI
 │   ├── app/
-│   │   ├── schemas/          # Modèles Pydantic (lichess.py, stockfish.py)
-│   │   ├── services/         # Logique métier API (lichess_service.py, stockfish_service.py)
-│   │   └── tools/            # Wrappers @tool LangGraph (lichess_tool.py, stockfish_tool.py)
-│   ├── scripts/              # Scripts de test (test_agent_minimal.py)
-│   └── tests/                # Tests unitaires pytest
-├── frontend/                 # Application Angular (à venir)
-├── data/                     # Données brutes (gitignoré, à régénérer via scripts)
-├── docs/                     # Documentation, note MCP, test log agent
-├── infra/                    # Configurations Milvus, MongoDB, services
-├── prompts/                  # System prompt agent + templates
-├── scripts/                  # Utilitaires de dev (download, populate, seed)
+│   │   ├── agent/                # Graph LangGraph + call_agent()
+│   │   ├── api/
+│   │   │   └── v1/
+│   │   │       └── routers/      # agent_router.py, chess_router.py
+│   │   ├── schemas/              # Modèles Pydantic (chess.py, lichess.py, stockfish.py)
+│   │   ├── services/             # Logique métier (lichess, stockfish, mongo)
+│   │   └── tools/                # Wrappers @tool LangGraph
+│   ├── scripts/                  # Scripts de test et utilitaires
+│   └── tests/                    # Tests d'intégration pytest
+├── frontend/                     # Application Angular (à venir)
+├── data/                         # Données brutes (gitignoré, à régénérer via scripts)
+├── docs/                         # Documentation, note MCP, test log agent
+├── prompts/                      # System prompt agent + templates
+├── scripts/                      # Utilitaires de dev (download, populate, seed)
 ├── docker-compose.yml
 ├── .env.example
 └── README.md
@@ -98,8 +103,8 @@ L'application sera accessible sur :
 - [x] Étape 2a : Tool Lichess (service + schemas Pydantic + tool LangGraph)
 - [x] Étape 2b : Tool Stockfish (service + schemas Pydantic + tool LangGraph)
 - [x] Jalon tool calling validé (agent 1 tool, puis agent 2 tools)
-- [ ] Étape 2c : System prompt soigné + gestion erreurs/timeouts
-- [ ] Étape 2d : Endpoints FastAPI
+- [x] Étape 2c : System prompt soigné + gestion erreurs/timeouts + validation FEN + boucle ReAct bornée
+- [x] Étape 2d : Endpoints FastAPI + logging MongoDB + tests d'intégration
 - [ ] Étape 3 : RAG Milvus (ingestion Wikichess + tool search)
 - [ ] Étape 4 : Tool YouTube
 - [ ] Étape 5 : Frontend Angular
