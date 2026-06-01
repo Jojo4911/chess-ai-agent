@@ -12,7 +12,9 @@ import os
 load_dotenv()
 
 llm_model = os.getenv("LLM_MODEL")
-prompt_path = Path(__file__).parents[2] / "prompts" / "agent_system.md"
+_docker_path = Path(__file__).parents[2] / "prompts" / "agent_system.md"
+_local_path = Path(__file__).parents[3] / "prompts" / "agent_system.md"
+prompt_path = _docker_path if _docker_path.exists() else _local_path
 
 # Lecture du system prompt
 def load_system_prompt(path: Path) -> str:
