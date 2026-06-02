@@ -82,6 +82,10 @@ L'application sera accessible sur :
 │   │   ├── api/
 │   │   │   └── v1/
 │   │   │       └── routers/      # agent_router.py, chess_router.py
+│   │   ├── rag/                  # RAG Milvus
+│   │   │   ├── milvus_client.py  # Connexion pymilvus + healthcheck
+│   │   │   ├── chunker.py        # RecursiveCharacterTextSplitter + extraction YAML
+│   │   │   └── knowledge/        # 10 articles Wikichess (.md, versionnés)
 │   │   ├── schemas/              # Modèles Pydantic (chess.py, lichess.py, stockfish.py)
 │   │   ├── services/             # Logique métier (lichess, stockfish, mongo)
 │   │   └── tools/                # Wrappers @tool LangGraph
@@ -105,7 +109,9 @@ L'application sera accessible sur :
 - [x] Jalon tool calling validé (agent 1 tool, puis agent 2 tools)
 - [x] Étape 2c : System prompt soigné + gestion erreurs/timeouts + validation FEN + boucle ReAct bornée
 - [x] Étape 2d : Endpoints FastAPI + logging MongoDB + tests d'intégration
-- [ ] Étape 3 : RAG Milvus (ingestion Wikichess + tool search)
+- [x] Étape 3a : Infra Milvus (docker-compose etcd + MinIO + Milvus standalone, connexion pymilvus)
+- [x] Étape 3b : Données Wikichess (10 articles curatés, chunker RecursiveCharacterTextSplitter, métadonnées ECO/ouverture)
+- [ ] Étape 3c : Embeddings sentence-transformers + ingestion Milvus + tool search_chess_knowledge
 - [ ] Étape 4 : Tool YouTube
 - [ ] Étape 5 : Frontend Angular
 - [ ] Étape 6 : Packaging Docker Compose final
