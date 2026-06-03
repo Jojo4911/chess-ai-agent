@@ -37,7 +37,7 @@ def is_milvus_healthy() -> bool:
     
 
 def create_collection() -> Collection:
-    """Crée la collection chess_knowledge avec index HNSW cosine. Idempotente."""
+    """Crée ou récupère la collection chess_knowledge avec index HNSW cosine. Idempotente."""
     connect_milvus()
 
     # Idempotence : si la collection existe déjà, on la charge et on la retourne
