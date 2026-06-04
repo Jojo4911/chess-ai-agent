@@ -9,7 +9,7 @@ YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 YOUTUBE_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search"
 
 # --- Tools ---
-def search_videos(query: str, max_results: int = 3) -> list[dict]:
+def search_videos(opening: str, max_results: int = 3) -> list[dict]:
     """
     Fais appel à l'API de Youtube pour trouver des vidéos en rapport avec l'ouverture traitée.
     """
@@ -17,6 +17,7 @@ def search_videos(query: str, max_results: int = 3) -> list[dict]:
     if not YOUTUBE_API_KEY:
         raise EnvironmentError("YOUTUBE_API_KEY non définie dans .env")
     
+    query = f"{opening} ouverture échecs tutoriel"
     params = {
         "key": YOUTUBE_API_KEY,
         "q": query,
