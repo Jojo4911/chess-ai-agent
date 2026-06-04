@@ -6,6 +6,7 @@ POC d'agent IA conversationnel d'aide à l'apprentissage des ouvertures aux éch
 
 - **Backend** : Python, FastAPI, LangGraph (agent ReAct), MongoDB
 - **Vectorstore** : Milvus
+- **Embeddings** : BGE-M3 (BAAI, multilingue FR/EN, dense 1024 dims)
 - **Moteur d'analyse** : Stockfish
 - **APIs externes** : Lichess Opening Explorer, YouTube Data v3
 - **LLM** : Claude Sonnet 4.5 (Anthropic)
@@ -71,6 +72,14 @@ L'application sera accessible sur :
 - Backend API : http://localhost:8000
 - Swagger : http://localhost:8000/docs
 
+### Ingestion de la base de connaissances
+
+À lancer une seule fois après `docker compose up` (idempotent, peut être relancé sans risque) :
+
+```bash
+docker compose exec api python -m scripts.ingest_wikichess
+```
+
 ## Structure du projet
 
 ```
@@ -82,20 +91,22 @@ L'application sera accessible sur :
 │   │   ├── api/
 │   │   │   └── v1/
 │   │   │       └── routers/      # agent_router.py, chess_router.py
-│   │   ├── rag/                  # RAG Milvus
-│   │   │   ├── milvus_client.py  # Connexion pymilvus + healthcheck
+│   │   ├── rag/                  # Pipeline RAG Milvus
+│   │   │   ├── milvus_client.py  # Connexion pymilvus + collection HNSW cosine
+│   │   │   ├── embedder.py       # BGE-M3 multilingue, encodage dense 1024 dims
+│   │   │   ├── rag_service.py    # search_knowledge() : recherche vectorielle
 │   │   │   ├── chunker.py        # RecursiveCharacterTextSplitter + extraction YAML
 │   │   │   └── knowledge/        # 10 articles Wikichess (.md, versionnés)
 │   │   ├── schemas/              # Modèles Pydantic (chess.py, lichess.py, stockfish.py)
 │   │   ├── services/             # Logique métier (lichess, stockfish, mongo)
 │   │   └── tools/                # Wrappers @tool LangGraph
-│   ├── scripts/                  # Scripts de test et utilitaires
+│   ├── scripts/
+│   │   └── ingest_wikichess.py   # Ingestion idempotente knowledge/ -> Milvus
 │   └── tests/                    # Tests d'intégration pytest
 ├── frontend/                     # Application Angular (à venir)
 ├── data/                         # Données brutes (gitignoré, à régénérer via scripts)
 ├── docs/                         # Documentation, note MCP, test log agent
 ├── prompts/                      # System prompt agent + templates
-├── scripts/                      # Utilitaires de dev (download, populate, seed)
 ├── docker-compose.yml
 ├── .env.example
 └── README.md
@@ -111,7 +122,7 @@ L'application sera accessible sur :
 - [x] Étape 2d : Endpoints FastAPI + logging MongoDB + tests d'intégration
 - [x] Étape 3a : Infra Milvus (docker-compose etcd + MinIO + Milvus standalone, connexion pymilvus)
 - [x] Étape 3b : Données Wikichess (10 articles curatés, chunker RecursiveCharacterTextSplitter, métadonnées ECO/ouverture)
-- [ ] Étape 3c : Embeddings sentence-transformers + ingestion Milvus + tool search_chess_knowledge
+- [x] Étape 3c : Embeddings BGE-M3 + collection HNSW cosine + ingestion idempotente + tool search_chess_knowledge + agent 3 tools
 - [ ] Étape 4 : Tool YouTube
 - [ ] Étape 5 : Frontend Angular
 - [ ] Étape 6 : Packaging Docker Compose final
