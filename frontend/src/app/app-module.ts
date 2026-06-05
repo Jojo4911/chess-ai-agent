@@ -4,9 +4,10 @@ import { provideHttpClient } from '@angular/common/http';
 
 import { App } from './app';
 import { Board } from './board/board';
+import { RecommendationsPanel } from './recommendations-panel/recommendations-panel';
 
 @NgModule({
-  declarations: [App, Board],
+  declarations: [App, Board, RecommendationsPanel],
   imports: [BrowserModule],
   providers: [provideHttpClient()],
   bootstrap: [App],

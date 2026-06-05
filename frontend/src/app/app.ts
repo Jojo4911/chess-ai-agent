@@ -1,5 +1,4 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { AgentService } from './services/agent.service';
 import { AskResponse } from './models/agent.models';
 
@@ -18,18 +17,10 @@ export class App {
   constructor(
     private agentService: AgentService,
     private cdr: ChangeDetectorRef,
-    private sanitizer: DomSanitizer
   ) {}
 
   onFenChange(fen: string): void {
     this.currentFen = fen;
-  }
-
-  formatAnswer(text: string): SafeHtml {
-    const html = text
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\n/g, '<br>');
-    return this.sanitizer.bypassSecurityTrustHtml(html);
   }
 
   onAsk(question: string): void {

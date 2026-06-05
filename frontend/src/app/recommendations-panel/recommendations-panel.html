@@ -1,0 +1,44 @@
+<div class="panel">
+
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <span>Analyse en cours...</span>
+    </div>
+  }
+
+  @if (!loading && error) {
+    <div class="error-state">
+      ⚠️ {{ error }}
+    </div>
+  }
+
+  @if (!loading && !error && response) {
+    <section class="panel-section">
+      <h3>Analyse de l'agent</h3>
+      <div class="answer-text" [innerHTML]="safeHtml(response.answer)"></div>
+    </section>
+
+    @if (moves) {
+      <section class="panel-section">
+        <h3>Coups suggérés (Lichess)</h3>
+        <div class="tool-output" [innerHTML]="safeHtml(moves.output)"></div>
+      </section>
+    }
+
+    @if (evaluation) {
+      <section class="panel-section">
+        <h3>Évaluation de la position (Stockfish)</h3>
+        <div class="tool-output" [innerHTML]="safeHtml(evaluation.output)"></div>
+      </section>
+    }
+
+    @if (videos) {
+      <section class="panel-section">
+        <h3>Vidéos recommandées</h3>
+        <div class="video-output" [innerHTML]="safeHtml(videos.output)"></div>
+      </section>
+    }
+  }
+
+</div>

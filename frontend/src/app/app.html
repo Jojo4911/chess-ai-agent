@@ -15,11 +15,9 @@
     </button>
   </div>
 
-  @if (error) {
-    <p class="error">{{ error }}</p>
-  }
-
-  @if (response) {
-    <div class="response" [innerHTML]="formatAnswer(response.answer)"></div>
-  }
+  <app-recommendations-panel
+    [response]="response"
+    [loading]="loading"
+    [error]="error"
+  ></app-recommendations-panel>
 </div>
