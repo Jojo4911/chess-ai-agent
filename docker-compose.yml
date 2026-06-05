@@ -16,6 +16,15 @@ services:
       - mongo
       - milvus
 
+  frontend:
+    build: frontend/
+    container_name: chess-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+    restart: "no"
+
   mongo:
     image: mongo:7
     container_name: chess-mongo
