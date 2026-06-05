@@ -1,1 +1,2 @@
-<app-board></app-board>
+<app-board (fenChange)="onFenChange($event)"></app-board>
+<p class="fen-display">{{ currentFen }}</p>

@@ -1,11 +1,15 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.html',
   standalone: false,
-  styleUrl: './app.css'
+  templateUrl: './app.html',
+  styleUrls: ['./app.css'],
 })
 export class App {
-  protected readonly title = signal('frontend');
+  currentFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
+  onFenChange(fen: string): void {
+    this.currentFen = fen;
+  }
 }
