@@ -1,2 +1,25 @@
-<app-board (fenChange)="onFenChange($event)"></app-board>
-<p class="fen-display">{{ currentFen }}</p>
+<div class="container">
+  <app-board (fenChange)="onFenChange($event)"></app-board>
+
+  <p class="fen-display">{{ currentFen }}</p>
+
+  <div class="question-area">
+    <input
+      #questionInput
+      type="text"
+      placeholder="Posez une question à l'agent..."
+      (keyup.enter)="onAsk(questionInput.value)"
+    />
+    <button (click)="onAsk(questionInput.value)" [disabled]="loading">
+      {{ loading ? 'En cours...' : 'Demander' }}
+    </button>
+  </div>
+
+  @if (error) {
+    <p class="error">{{ error }}</p>
+  }
+
+  @if (response) {
+    <div class="response" [innerHTML]="formatAnswer(response.answer)"></div>
+  }
+</div>
