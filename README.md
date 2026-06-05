@@ -123,7 +123,7 @@ docker compose exec api python -m scripts.ingest_wikichess
 - [x] Étape 3a : Infra Milvus (docker-compose etcd + MinIO + Milvus standalone, connexion pymilvus)
 - [x] Étape 3b : Données Wikichess (10 articles curatés, chunker RecursiveCharacterTextSplitter, métadonnées ECO/ouverture)
 - [x] Étape 3c : Embeddings BGE-M3 + collection HNSW cosine + ingestion idempotente + tool search_chess_knowledge + agent 3 tools
-- [ ] Étape 4 : Tool YouTube
+- [x] Étape 4 : Tool YouTube
 - [ ] Étape 5 : Frontend Angular
 - [ ] Étape 6 : Packaging Docker Compose final
 - [ ] Étape 7 : Étude de faisabilité MCP

@@ -3,6 +3,7 @@ from pydantic import ValidationError
 from app.schemas.chess import ValidFen
 from app.services.lichess_service import get_theoretical_moves
 from app.services.stockfish_service import evaluate_position
+from app.services.youtube_service import search_videos
 from langchain_core.tools import ToolException
 
 router = APIRouter(prefix="/api/v1", tags=["chess"])
@@ -34,4 +35,12 @@ async def evaluate(fen: str = Path(...)):
         result = evaluate_position(fen)
         return {"evaluation": result}
     except ToolException as e:
+        raise HTTPException(status_code=503, detail=str(e))
+    
+@router.get("/videos/{opening}")
+async def videos(opening: str = Path(...)):
+    try:
+        result = search_videos(opening)
+        return {"opening": opening, "videos": result}
+    except (ToolException, EnvironmentError) as e:
         raise HTTPException(status_code=503, detail=str(e))

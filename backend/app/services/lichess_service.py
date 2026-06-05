@@ -62,8 +62,7 @@ def get_theoretical_moves(fen: str) -> OpeningExplorerResponse:
                     params={"fen": fen},
                 )
                 response.raise_for_status()
-                break
-                # - Décomposition de la réponse -    
+                break  
             except httpx.TimeoutException as e:
                 raise ToolException("Lichess n'a pas répondu dans les temps, réessaie plus tard.") from e
             except httpx.HTTPStatusError as e:

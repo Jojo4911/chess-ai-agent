@@ -5,6 +5,7 @@ from langgraph.errors import GraphRecursionError
 from app.tools.lichess_tool import get_opening_moves
 from app.tools.stockfish_tool import get_position_evaluation
 from app.tools.rag_tool import search_chess_knowledge
+from app.tools.youtube_tool import find_videos
 from dotenv import load_dotenv
 from pathlib import Path
 from typing import Literal
@@ -24,7 +25,7 @@ def load_system_prompt(path: Path) -> str:
     
 system_prompt_text = load_system_prompt(prompt_path)
 
-tools = [get_opening_moves, get_position_evaluation, search_chess_knowledge]
+tools = [get_opening_moves, get_position_evaluation, search_chess_knowledge, find_videos]
 tools_by_name = {tool.name: tool for tool in tools}
     
 # Initialisation du modèle
