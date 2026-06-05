@@ -15,6 +15,7 @@ def get_position_evaluation(fen: str) -> str:
 
     À NE PAS utiliser :
     * Quand l'utilisateur veut connaître les coups les plus joués par les maîtres.
+    * Quand l'utilisateur veut en savoir plus sur une ouverture spécifique (histoire, théorie).
 
     Champs vides : L'outil peut retourner des champs vides, par exemple le paramètre 'Mate' peut être vide pour un début de partie.
 

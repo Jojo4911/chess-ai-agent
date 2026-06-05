@@ -8,7 +8,7 @@ def find_videos(opening: str) -> str:
     Recherche des vidéos YouTube pédagogiques sur une ouverture d'échecs.
 
     À utiliser : 
-    * Quand l'utilisateur veut des ressources vidéo pour apprendre une ouverture.
+    * Quand l'utilisateur veut une ou des ressources vidéo pour apprendre une ouverture.
 
     À NE PAS utiliser :
     * Pour les coups théoriques (get_opening_moves) ni l'évaluation d'une position (get_position_evaluation).

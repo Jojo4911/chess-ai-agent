@@ -6,7 +6,7 @@ from app.services.lichess_service import get_theoretical_moves
 @tool(args_schema=ValidFen)
 def get_opening_moves(fen: str) -> str:
     """
-    Interroge la base de données de parties de maîtres des échecs de l'Opening Explorer Lichess et retourne les coups théoriques principaux avec leurs statistiques.
+    Interroge la base de données de parties de maîtres des échecs de l'Opening Explorer Lichess et retourne le nom de l'ouverture jouée (si connue), les coups théoriques principaux avec leurs statistiques.
 
     À utiliser :
     * Quand l'utilisateur est dans la phase d'ouverture d'une partie, les premiers coups.
