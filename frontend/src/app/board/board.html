@@ -1,0 +1,20 @@
+<div class="board">
+  @for (row of grid; track $index) {
+    <div class="rank">
+      @for (cell of row; track cell.square) {
+        <div
+          class="cell"
+          [class.light]="cell.isLight"
+          [class.dark]="!cell.isLight"
+          [class.selected]="cell.isSelected"
+          [class.target]="cell.isTarget"
+          (click)="onCellClick(cell)"
+        >
+          @if (cell.piece) {
+            <span class="piece">{{ getSymbol(cell.piece) }}</span>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

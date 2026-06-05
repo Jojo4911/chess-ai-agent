@@ -1,0 +1,31 @@
+.board {
+  display: block;
+  width: fit-content;
+  margin: 2rem auto;
+  border: 2px solid #333;
+}
+
+.rank {
+  display: flex;
+}
+
+.cell {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.light { background: #f0d9b5; }
+.dark  { background: #b58863; }
+
+.selected { outline: 3px solid #1565c0; outline-offset: -3px; }
+.target   { outline: 3px solid #2e7d32; outline-offset: -3px; }
+
+.piece {
+  font-size: 46px;
+  line-height: 1;
+  user-select: none;
+}

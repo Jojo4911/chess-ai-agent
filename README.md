@@ -10,7 +10,7 @@ POC d'agent IA conversationnel d'aide à l'apprentissage des ouvertures aux éch
 - **Moteur d'analyse** : Stockfish
 - **APIs externes** : Lichess Opening Explorer, YouTube Data v3
 - **LLM** : Claude Sonnet 4.5 (Anthropic)
-- **Frontend** : Angular, ngx-chess-board
+- **Frontend** : Angular, chess.js
 - **Orchestration** : Docker Compose
 
 ## Architecture
@@ -103,7 +103,7 @@ docker compose exec api python -m scripts.ingest_wikichess
 │   ├── scripts/
 │   │   └── ingest_wikichess.py   # Ingestion idempotente knowledge/ -> Milvus
 │   └── tests/                    # Tests d'intégration pytest
-├── frontend/                     # Application Angular (à venir)
+├── frontend/                     # Application Angular (échiquier chess.js, AgentService, connexion agent)
 ├── data/                         # Données brutes (gitignoré, à régénérer via scripts)
 ├── docs/                         # Documentation, note MCP, test log agent
 ├── prompts/                      # System prompt agent + templates

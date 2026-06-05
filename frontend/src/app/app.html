@@ -1,0 +1,23 @@
+<div class="container">
+  <app-board (fenChange)="onFenChange($event)"></app-board>
+
+  <p class="fen-display">{{ currentFen }}</p>
+
+  <div class="question-area">
+    <input
+      #questionInput
+      type="text"
+      placeholder="Posez une question à l'agent..."
+      (keyup.enter)="onAsk(questionInput.value)"
+    />
+    <button (click)="onAsk(questionInput.value)" [disabled]="loading">
+      {{ loading ? 'En cours...' : 'Demander' }}
+    </button>
+  </div>
+
+  <app-recommendations-panel
+    [response]="response"
+    [loading]="loading"
+    [error]="error"
+  ></app-recommendations-panel>
+</div>
