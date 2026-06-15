@@ -52,20 +52,43 @@ Le LLM orchestre les tools via leurs docstrings, sans `if/else` côté Python :
 
 ## Prérequis
 
-- Docker Desktop (avec Docker Compose v2)
+- Docker Desktop 4.x ou supérieur (avec Docker Compose v2)
 - Git
-- Stockfish (binaire système)
+- 8 Go de RAM disponibles (Milvus + BGE-M3 sont gourmands)
 - Clés API : Anthropic, Lichess, YouTube Data v3
 
-## Installation rapide
+> Stockfish est installé automatiquement dans le conteneur backend via `apt`. Aucune installation locale requise.
+
+## Configuration du fichier .env
+
+Copier `.env.example` en `.env` et renseigner les variables suivantes :
+
+```bash
+cp .env.example .env
+```
+
+| Variable | Description | Obligatoire |
+|----------|-------------|-------------|
+| `ANTHROPIC_API_KEY` | Clé API Anthropic (claude.ai/account) | Oui |
+| `YOUTUBE_API_KEY` | Clé API YouTube Data v3 (console.cloud.google.com) | Oui |
+| `LICHESS_API_KEY` | Token Lichess (lichess.org/account/oauth/token) | Oui |
+| `LICHESS_URL` | URL Opening Explorer (défaut : `explorer.lichess.ovh`) | Non |
+| `MONGO_URI` | URI MongoDB (défaut : `mongodb://mongo:27017`) | Non |
+| `MILVUS_HOST` | Hôte Milvus (défaut : `milvus`) | Non |
+| `MILVUS_PORT` | Port Milvus (défaut : `19530`) | Non |
+| `STOCKFISH_PATH` | Chemin Stockfish (défaut : `/usr/games/stockfish`) | Non |
+
+## Installation et démarrage
 
 ```bash
 git clone <repo-url>
-cd <repo-name>
+cd chess-ai-agent
 cp .env.example .env
-# Renseigner les clés API dans .env
+# Renseigner ANTHROPIC_API_KEY et YOUTUBE_API_KEY dans .env
 docker compose up --build
 ```
+
+Le premier démarrage télécharge le modèle BGE-M3 (~1.5 Go). Compter 5 à 10 minutes selon la connexion. Les démarrages suivants sont rapides (modèle en cache).
 
 L'application sera accessible sur :
 - Frontend : http://localhost:4200
@@ -78,6 +101,27 @@ L'application sera accessible sur :
 
 ```bash
 docker compose exec api python -m scripts.ingest_wikichess
+```
+
+### Démarrage sans rebuild
+
+Pour les lancements suivants (code inchangé) :
+
+```bash
+docker compose up -d
+```
+
+Pour tout arrêter sans supprimer les données :
+
+```bash
+docker compose down
+```
+
+Pour repartir d'une installation fraîche (supprime les volumes) :
+
+```bash
+docker compose down -v
+docker compose up --build
 ```
 
 ## Structure du projet
@@ -104,12 +148,32 @@ docker compose exec api python -m scripts.ingest_wikichess
 │   │   └── ingest_wikichess.py   # Ingestion idempotente knowledge/ -> Milvus
 │   └── tests/                    # Tests d'intégration pytest
 ├── frontend/                     # Application Angular (échiquier chess.js, AgentService, connexion agent)
-├── data/                         # Données brutes (gitignoré, à régénérer via scripts)
-├── docs/                         # Documentation, note MCP, test log agent
-├── prompts/                      # System prompt agent + templates
+├── docs/                         # Documentation et note MCP
+├── prompts/                      # System prompt agent
 ├── docker-compose.yml
 ├── .env.example
 └── README.md
+```
+
+## Troubleshooting
+
+**Le frontend ne démarre pas (`dependency failed to start`)**
+Le frontend attend que l'API soit `healthy`. L'API attend le chargement du modèle BGE-M3 au premier démarrage (5 à 10 min). Patienter jusqu'à voir `fastapi-application Healthy` dans la sortie de `docker compose up`.
+
+**`docker compose ps` montre `api` en `unhealthy` après 10 minutes**
+Vérifier les logs : `docker logs fastapi-application --tail=50`. Cause probable : variable d'environnement manquante dans `.env` (notamment `ANTHROPIC_API_KEY`).
+
+**Port 8000 ou 4200 déjà utilisé**
+Arrêter le processus occupant le port ou modifier les ports dans `docker-compose.yml` (`"8001:8000"` par exemple).
+
+**Milvus ne démarre pas (`etcd` ou `minio` unhealthy)**
+Ces services sont lents sur certaines machines. Augmenter le `start_period` dans le `docker-compose.yml` ou relancer avec `docker compose up -d` (les services déjà healthy ne redémarrent pas).
+
+**Réinitialiser complètement**
+```bash
+docker compose down -v
+docker system prune -f
+docker compose up --build
 ```
 
 ## Avancement
@@ -123,9 +187,9 @@ docker compose exec api python -m scripts.ingest_wikichess
 - [x] Étape 3a : Infra Milvus (docker-compose etcd + MinIO + Milvus standalone, connexion pymilvus)
 - [x] Étape 3b : Données Wikichess (10 articles curatés, chunker RecursiveCharacterTextSplitter, métadonnées ECO/ouverture)
 - [x] Étape 3c : Embeddings BGE-M3 + collection HNSW cosine + ingestion idempotente + tool search_chess_knowledge + agent 3 tools
-- [x] Étape 4 : Tool YouTube
-- [ ] Étape 5 : Frontend Angular
-- [ ] Étape 6 : Packaging Docker Compose final
+- [x] Étape 4 : Tool YouTube + agent 4 tools
+- [x] Étape 5 : Frontend Angular (échiquier, synchro FEN, panel recommandations, états chargement/erreur)
+- [x] Étape 6 : Packaging Docker Compose final (healthchecks, depends_on conditionnel, volumes persistants)
 - [ ] Étape 7 : Étude de faisabilité MCP
 
 ## Auteur
