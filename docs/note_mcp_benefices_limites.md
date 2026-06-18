@@ -6,6 +6,33 @@
 
 Le système étudié est un serveur MCP dédié à l'analyse vidéo : stockage de vidéos pédagogiques d'échecs, extraction de frames, détection d'échiquier et conversion en notation FEN via un modèle de vision, puis recherche d'une position exacte dans le catalogue avec retour du lien et du timestamp précis. Ce système est distinct de l'agent ReAct existant (Lichess, Stockfish, RAG, YouTube), qui reste hors de ce périmètre.
 
+### Architecture technique
+
+Le système se découpe en deux flux distincts : un pipeline d'ingestion exécuté une fois par vidéo (coût ponctuel, hors ligne), et un serveur MCP exposant une fonction de recherche sur l'index déjà construit (coût récurrent négligeable, en ligne). Cette séparation correspond directement à la distinction build/opex détaillée dans l'étude de faisabilité plus bas dans la note.
+
+```mermaid
+flowchart TB
+    subgraph PIPELINE["Pipeline d'ingestion (offline, par vidéo)"]
+        A(["Nouvelle vidéo sélectionnée"]) --> B[/"URL vidéo YouTube"/]
+        B --> C["Téléchargement de la vidéo"]
+        B --> Tr["Récupération des sous-titres, API YouTube Data v3 captions"]
+        C --> D["Extraction des frames, 1 frame/s"]
+        D --> E["Détection de l'échiquier, chessimg2pos"]
+        E --> F["Conversion en position FEN"]
+        F --> Del["Suppression vidéo et frames"]
+        F --> Idx[("Index : timestamp / FEN / transcript")]
+        Tr --> Idx
+    end
+
+    subgraph MCPSRV["Serveur MCP, runtime, exposition recherche"]
+        Req[/"Requête : position FEN"/] --> Search["Fonction de recherche"]
+        Idx --> Search
+        Search --> Rep(["Réponse : lien vidéo + timestamp"])
+    end
+```
+
+La récupération des sous-titres part directement de l'URL vidéo, sans dépendre du téléchargement du fichier : l'API YouTube Data v3 fournit les captions à partir du seul identifiant de la vidéo. La vidéo brute et les frames extraites sont supprimées une fois la position FEN obtenue, seul l'index léger (timestamp, FEN, transcript) est conservé durablement. Le serveur MCP n'intervient qu'au moment de la recherche, il interroge l'index déjà construit et ne déclenche aucun nouveau traitement vidéo.
+
 ### Bénéfices attendus
 
 **Une base de connaissance ancrée dans la pratique réelle.** Contrairement au RAG actuel, qui s'appuie sur des articles théoriques, ce système capture des positions issues de vraies parties commentées, avec la logique du formateur expliquant pourquoi telle variante est choisie plutôt qu'une autre. Ce niveau d'explication contextuelle dépasse ce que les statistiques Lichess (taux de victoire, fréquence) peuvent fournir.
