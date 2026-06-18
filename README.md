@@ -190,7 +190,7 @@ docker compose up --build
 - [x] Étape 4 : Tool YouTube + agent 4 tools
 - [x] Étape 5 : Frontend Angular (échiquier, synchro FEN, panel recommandations, états chargement/erreur)
 - [x] Étape 6 : Packaging Docker Compose final (healthchecks, depends_on conditionnel, volumes persistants)
-- [ ] Étape 7 : Étude de faisabilité MCP
+- [x] Étape 7 : Étude de faisabilité MCP (bénéfices/limites, schéma d'architecture, chiffrage build/opex, alternatives, roadmap, note exportée en PDF dans `docs/`)
 
 ## Auteur
 
