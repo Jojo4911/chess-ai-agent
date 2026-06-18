@@ -121,3 +121,18 @@ Hypothèses de volume retenues : un lot initial de 100 vidéos, en français ou 
 | Appels API YouTube                                 | Opex, récurrent | Dans le quota gratuit pour ce volume |
 
 Le poste dominant du build est le temps de développement, pas le coût de calcul, ce dernier restant marginal grâce au choix d'un modèle de vision existant sans fine-tuning et d'un périmètre 2D. Cette répartition justifie a posteriori la décision de ne pas couvrir les échiquiers physiques filmés dans cette première version, le coût de développement d'un second pipeline de vision 3D representant un effort comparable ou supérieur au pipeline 2D pour une couverture de contenu plus restreinte.
+
+## Alternatives envisagées
+
+**Détection par API tierce payante plutôt que modèle open source intégré.** Des services cloud clé en main pour la détection d'échiquier existent et offriraient probablement une robustesse supérieure d'emblée, sans effort d'intégration. Le choix d'un modèle open source (chessimg2pos) intégré en interne a été préféré pour maîtriser le coût récurrent à grande échelle : un service payant facture à l'usage et ce coût croît avec le volume de vidéos traitées, alors qu'un développement interne reste à un coût marginal une fois l'intégration faite. Cette alternative resterait pertinente si la précision du modèle open source se révélait insuffisante en pratique.
+
+**Intégration comme outil de l'agent existant plutôt que serveur MCP séparé.** L'index pourrait être consulté comme une source supplémentaire par l'agent ReAct, au même titre que le RAG Milvus, sans passer par un serveur dédié. Le choix d'un serveur MCP séparé a été retenu pour isoler le cycle de vie propre à ce sous-système (traitement vidéo asynchrone, mise à jour indépendante du reste de l'agent) et pour explorer cette brique d'architecture dans le cadre de la valeur ajoutée du projet. Un agent ultérieur pourrait néanmoins consommer cet index directement en tool si la séparation MCP n'apporte pas de bénéfice opérationnel suffisant en pratique.
+
+## Roadmap
+
+1. **Pipeline d'ingestion et index.** Construire la chaîne complète (téléchargement, extraction de frames, détection, conversion FEN) et formaliser le format d'index. La récupération de la transcription est intégrée dès cette première itération : son coût d'ajout est négligeable face au gain de désambiguïsation qu'elle apporte.
+2. **Serveur MCP minimal.** Exposer la fonction de recherche : requête sur une position FEN, interrogation de l'index, retour du lien vidéo au timestamp exact.
+3. **Montée en volume du catalogue.** Cadrer la liste des ouvertures cibles et ingérer par lots successifs pour réduire le déséquilibre de couverture identifié plus haut.
+4. **Recherche hybride texte et FEN.** Exploiter la transcription déjà indexée pour retrouver un concept évoqué à l'oral, pas seulement une position exacte.
+5. **Extension à la détection 3D.** Couvrir les échiquiers physiques filmés, pour accéder à des ouvertures plus de niche peu représentées en contenu numérique.
+6. **Fine-tuning du modèle de détection.** Une fois un volume suffisant de données réelles collecté via les étapes précédentes, affiner la précision au-delà de ce que permet le modèle existant utilisé tel quel.
